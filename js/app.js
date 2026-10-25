@@ -8,6 +8,7 @@
   const AVATARS = ['🦊', '🐼', '🦄', '🐯', '🐱', '🐸', '🐧', '🦋', '🐬', '🌸', '⭐', '🎧'];
   const QUIZ_LEN = 10;
   const QUIZ_SECONDS = 20;
+  const AR_SECONDS = 35;  // Assertion–Reason questions need more reading time
   const FLASH_LEN = 10;
   const MOODS = ['😍', '🙂', '😐', '😕', '😫'];
   const MODE_NAMES = { flash: 'Flashcards', quiz: 'Quiz Battle', match: 'Match Up', balance: 'Balance Lab', write: 'Answer Writing' };
@@ -335,7 +336,7 @@
     const p = chapterProgress(ch);
     const modes = [
       { m: 'flash', ic: '🃏', name: 'Flashcards', sub: `${cardsMastered(ch)}/${ch.flashcards.length} mastered`, c: '#7c5cff' },
-      { m: 'quiz', ic: '⚡', name: 'Quiz Battle', sub: `Best: ${S.best[ch.id + ':quiz'] || 0}/${QUIZ_LEN}`, c: '#facc15' },
+      { m: 'quiz', ic: '⚡', name: 'Quiz Battle', sub: `${ch.quiz.length} questions · Best ${S.best[ch.id + ':quiz'] || 0}/${QUIZ_LEN}`, c: '#facc15' },
       { m: 'match', ic: '🧩', name: 'Match Up', sub: `${ch.match.length} rounds`, c: '#22c55e' },
       { m: 'balance', ic: '⚖️', name: 'Balance Lab', sub: `${ch.balance.filter(b => S.balanced[b.id]).length}/${ch.balance.length} balanced`, c: '#22d3ee' },
       { m: 'write', ic: '✍️', name: 'Answer Writing', sub: `${ch.written.filter(w => S.answers[w.id] != null).length}/${ch.written.length} practised`, c: '#f43f5e' }
@@ -464,8 +465,10 @@
 
     function show() {
       const q = qs[i];
-      const opts = shuffle(q.options.map((t, k) => ({ t, ok: k === q.answer })));
-      let left = QUIZ_SECONDS, answered = false;
+      const all = q.options.map((t, k) => ({ t, ok: k === q.answer }));
+      const opts = q.fixed ? all : shuffle(all); // Assertion–Reason options keep their (a)–(d) order
+      const secs = q.fixed ? AR_SECONDS : QUIZ_SECONDS;
+      let left = secs, answered = false;
       $app.innerHTML = topbar('⚡ Quiz Battle', '#/chapter/' + ch.id, `<span class="pill">⭐ ${points}</span>`) + `
         <div class="row small muted"><span class="grow">Question ${i + 1} of ${qs.length}</span>
           ${combo >= 2 ? `<span class="combo">🔥 Combo x${combo}</span>` : ''}</div>
@@ -479,7 +482,7 @@
         left -= 0.1;
         const tf = document.getElementById('tf');
         if (!tf) return cleanup();
-        tf.style.width = Math.max(0, left / QUIZ_SECONDS * 100) + '%';
+        tf.style.width = Math.max(0, left / secs * 100) + '%';
         document.getElementById('tb').classList.toggle('low', left < 5);
         if (left <= 0) answer(-1);
       }, 100);
@@ -551,14 +554,16 @@
     const left = shuffle(set.pairs.map((p, i) => ({ t: p[0], i })));
     const right = shuffle(set.pairs.map((p, i) => ({ t: p[1], i })));
     let sel = null, matched = 0, mistakes = 0;
+    const missed = new Set(); // pair indexes she got wrong at least once
     const start = Date.now();
 
     $app.innerHTML = topbar('🧩 Match Up', '#/chapter/' + ch.id, `<span class="pill" id="mm">❌ 0</span>`) + `
-      <p class="muted small" style="margin-top:-6px">Round: <b>${esc(set.title)}</b> — tap one on the left, then its partner on the right.</p>
+      <p class="muted small" style="margin-top:-6px">Round ${r + 1} of ${ch.match.length}: <b>${esc(set.title)}</b> — tap one on the left, then its partner on the right.</p>
       <div class="match">
         <div class="col">${left.map(x => `<button class="mi" data-side="L" data-i="${x.i}">${fmt(x.t)}</button>`).join('')}</div>
         <div class="col">${right.map(x => `<button class="mi" data-side="R" data-i="${x.i}">${fmt(x.t)}</button>`).join('')}</div>
-      </div>`;
+      </div>
+      <div id="mhint" style="margin-top:14px"></div>`;
     bindBack();
 
     $$('.mi').forEach(b => b.onclick = () => {
@@ -580,6 +585,14 @@
         [a, b].forEach(x => { x.classList.remove('shake'); void x.offsetWidth; x.classList.add('shake'); });
         a.classList.remove('sel');
         sel = null; sfx('bad');
+        // Teach the right pair for the left-side item she picked, and make its partner glow.
+        const leftBtn = a.dataset.side === 'L' ? a : b;
+        const i = Number(leftBtn.dataset.i);
+        missed.add(i);
+        $('#mhint').innerHTML = `<div class="panel explain pop small">❌ Not a match.<br>
+          ✅ <b>${fmt(set.pairs[i][0])}</b> → <b>${fmt(set.pairs[i][1])}</b></div>`;
+        const partner = $(`[data-side="R"][data-i="${i}"]`);
+        partner.classList.remove('glow'); void partner.offsetWidth; partner.classList.add('glow');
       }
     });
 
@@ -592,6 +605,10 @@
       renderResult({
         ch, mode: 'match', xp, stars, emoji: '🧩', title: 'All matched!',
         text: `${secs} seconds · ${mistakes} mistake${mistakes === 1 ? '' : 's'}`,
+        extra: `<div class="panel"><b>Remember these pairs:</b>
+          ${set.pairs.map((p, i) => `<div class="kp small"><span>${missed.has(i) ? '⚠️' : '✅'}</span>
+            <span><b>${fmt(p[0])}</b> → ${fmt(p[1])}</span></div>`).join('')}
+          ${missed.size ? '<div class="muted small" style="margin-top:8px">⚠️ = you got this one wrong. Read it once more!</div>' : ''}</div>`,
         again: () => renderMatch(ch, (r + 1) % ch.match.length), againLabel: '🧩 Next round'
       });
     }
@@ -733,7 +750,7 @@
     if (!w) return renderWriteList(ch);
     $app.innerHTML = topbar(`✍️ Question ${i + 1}`, `#/play/${ch.id}/write`, `<span class="marks">${w.marks} mark${w.marks > 1 ? 's' : ''}</span>`) + `
       <div class="qtext">${fmt(w.q)}</div>
-      <div class="panel small muted">💡 Tip: ${w.marks === 1 ? 'one clear sentence is enough.' : w.marks === 2 ? 'write 2 clear points.' : 'write 3 points, and add an equation or example.'}
+      <div class="panel small muted">💡 Tip: ${{ 1: 'one clear sentence is enough.', 2: 'write 2 clear points.', 3: 'write 3 points, and add an equation or example.', 4: 'answer every part (a), (b), (c), (d) separately.', 5: 'write 5 points: definition, explanation, equations, examples.' }[w.marks]}
         Write formulas like H2O — they will show correctly when checked.</div>
       <textarea id="ans" placeholder="Write your answer here…">${esc(S.drafts[w.id] || '')}</textarea>
       <div id="out" style="margin-top:14px"><button class="btn block" id="chk">Check my answer ✔</button></div>`;
