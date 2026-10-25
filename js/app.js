@@ -933,7 +933,7 @@
       </div>
       <div class="panel stack">
         <b>📲 Install on your phone</b>
-        <div class="muted small">Android (Chrome): tap ⋮ menu → <b>Add to Home screen</b> / <b>Install app</b>.<br>
+        <div class="muted small">Android (Chrome): tap ⋮ menu → <b>Install and create shortcut</b> (older Chrome: <b>Add to Home screen</b>), then tap <b>Install</b> if asked.<br>
         iPhone (Safari): tap Share → <b>Add to Home Screen</b>.</div>
       </div>
       <div class="panel stack">

@@ -32,7 +32,7 @@ Open http://localhost:8080 in Chrome.
 
 **https://mcaashish28.github.io/study-game-zone/** (hosted free on GitHub Pages from the `main` branch)
 
-On the phone: open the link in Chrome → ⋮ menu → **Add to Home screen** / **Install app**.
+On the phone: open the link in Chrome → ⋮ menu → **Install and create shortcut** (older Chrome: **Add to Home screen**) → **Install**.
 
 ## Publish changes
 
