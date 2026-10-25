@@ -28,9 +28,21 @@ python3 -m http.server 8080
 
 Open http://localhost:8080 in Chrome.
 
-## Put it on the phone
+## Live app
 
-The app needs to be hosted on an HTTPS site to install and work offline. Free options: GitHub Pages or Netlify Drop (drag the whole folder onto https://app.netlify.com/drop). Then open the link on the phone → Chrome menu → **Add to Home screen**.
+**https://mcaashish28.github.io/study-game-zone/** (hosted free on GitHub Pages from the `main` branch)
+
+On the phone: open the link in Chrome → ⋮ menu → **Add to Home screen** / **Install app**.
+
+## Publish changes
+
+```sh
+git add -A
+git commit -m "Add Science chapter 2"
+git push
+```
+
+GitHub Pages updates the live app about a minute after the push. The phone picks up the new version the next time she opens the app while online. Bump `VERSION` in `sw.js` whenever files change.
 
 ## Add a new chapter
 
