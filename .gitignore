@@ -1,0 +1,4 @@
+.DS_Store
+.playwright-mcp/
+# Textbook PDFs/scans stay private (copyright)
+source/
