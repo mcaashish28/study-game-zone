@@ -4,7 +4,7 @@ window.SWG = window.SWG || {};
 SWG.subjects = [
   { id: 'science', name: 'Science', icon: '🧪', color: '#22d3ee', chapters: [] },
   { id: 'math', name: 'Maths', icon: '📐', color: '#a78bfa', chapters: [] },
-  { id: 'punjabi', name: 'ਪੰਜਾਬੀ', icon: '📖', color: '#f59e0b', chapters: [] }
+  { id: 'punjabi', name: 'Punjabi ਪੰਜਾਬੀ', icon: '📖', color: '#f59e0b', chapters: [] }
 ];
 
 // Item ids are assigned by position, so always ADD new items at the END of a list

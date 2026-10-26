@@ -226,3 +226,12 @@ input[type=text] { width: 100%; padding: 14px; border-radius: 14px; background: 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
 }
+
+/* Punjabi: bigger Gurmukhi and listen buttons */
+.pa { font-size: 1.3em; line-height: 1.6; }
+.say { display: flex; gap: 8px; justify-content: center; margin-top: 10px; }
+.say button {
+  width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--line);
+  background: var(--panel-2); font-size: 1.3rem; cursor: pointer;
+}
+.say button:active { transform: scale(.92); }

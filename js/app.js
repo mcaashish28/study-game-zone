@@ -64,6 +64,7 @@
     return esc(s)
       .replace(/-&gt;/g, '→')
       .replace(/([A-Za-z)])(\d+)/g, '$1<sub>$2</sub>')
+      .replace(/[਀-੿]+(?:[ ,?!।]+[਀-੿]+)*/g, '<span class="pa">$&</span>') // Gurmukhi a bit larger
       .replace(/\n/g, '<br>');
   }
   function shuffle(a) {
@@ -178,6 +179,56 @@
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
   }
+
+  // ---------------------------------------------------------------- read aloud (Punjabi)
+
+  // Only the Gurmukhi part is spoken: "ਮਾਂ — mother" -> "ਮਾਂ". Sentences stay together;
+  // a lone vowel sign like ਾ is skipped.
+  const GURMUKHI = /[ਅ-ਹਖ਼-੯ੲ-ੴ][਀-੿]*(?:[ ,?!।]+[਀-੿]+)*[?!।]?/g;
+  const gurmukhiIn = s => (String(s).match(GURMUKHI) || []).join('. ');
+
+  // Few phones have a Punjabi voice, but most have Hindi. Gurmukhi and Devanagari sit in
+  // parallel Unicode blocks (ਕ U+0A15 -> क U+0915), so a word can be shifted letter by letter.
+  function toDevanagari(s) {
+    return s
+      .replace(/ੲ([ਿੀੇ])/g, (_, v) => ({ 'ਿ': 'इ', 'ੀ': 'ई', 'ੇ': 'ए' }[v]))
+      .replace(/ੳ([ੁੂੋ])/g, (_, v) => ({ 'ੁ': 'उ', 'ੂ': 'ऊ', 'ੋ': 'ओ' }[v]))
+      .replace(/ੱ([ਕ-ਹਖ਼-ਫ਼])/g, '$1੍$1') // addak doubles the next letter
+      .replace(/ੰ/g, 'ਂ') // tippi and bindi are both a nasal 'n'
+      .replace(/[ਁ-੯]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x100));
+  }
+
+  let voices = [];
+  function loadVoices() { try { voices = speechSynthesis.getVoices(); } catch (e) { /* no speech */ } }
+  if ('speechSynthesis' in window) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
+  const findVoice = lang => voices.find(v => v.lang.toLowerCase().startsWith(lang));
+
+  function speak(s, rate) {
+    const text = gurmukhiIn(s);
+    if (!text) return;
+    if (!('speechSynthesis' in window)) return toast('This browser cannot read aloud 😕');
+    loadVoices();
+    const pa = findVoice('pa'), hi = findVoice('hi');
+    const u = new SpeechSynthesisUtterance(pa ? text : toDevanagari(text));
+    u.lang = pa ? 'pa-IN' : 'hi-IN';
+    if (pa || hi) u.voice = pa || hi;
+    u.rate = rate || 0.8;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  }
+
+  // 🔊 and 🐢 (slow) buttons for any text that has Gurmukhi in it.
+  function sayBtns(s) {
+    if (!gurmukhiIn(s)) return '';
+    return `<span class="say"><button data-say="${esc(s)}" aria-label="Listen">🔊</button><button data-say="${esc(s)}" data-slow aria-label="Listen slowly">🐢</button></span>`;
+  }
+  // Capture phase, so tapping 🔊 on a flashcard does not also flip it.
+  $app.addEventListener('click', e => {
+    const b = e.target.closest('[data-say]');
+    if (!b) return;
+    e.stopPropagation();
+    speak(b.dataset.say, b.hasAttribute('data-slow') ? 0.5 : 0.8);
+  }, true);
 
   function confetti() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -414,8 +465,8 @@
       $app.innerHTML = topbar('🃏 Flashcards', '#/chapter/' + ch.id, `<span class="pill">${done}/${total}</span>`) + `
         <div class="bar"><i style="width:${done / total * 100}%"></i></div>
         <div class="flip-wrap"><div class="flip" id="card" role="button" tabindex="0" aria-label="Flip card">
-          <div class="face side-q"><span class="tag">${esc(ch.topics[c.topic])}</span><div>${fmt(c.front)}</div><span class="hint">Think of the answer, then tap to flip 👆</span></div>
-          <div class="face side-a"><span class="tag">Answer</span><div>${fmt(c.back)}</div></div>
+          <div class="face side-q"><span class="tag">${esc(ch.topics[c.topic])}</span><div>${fmt(c.front)}</div>${sayBtns(c.front)}<span class="hint">Think of the answer, then tap to flip 👆</span></div>
+          <div class="face side-a"><span class="tag">Answer</span><div>${fmt(c.back)}</div>${sayBtns(c.back)}</div>
         </div></div>
         <div class="row" id="rate" style="visibility:hidden">
           <button class="btn bad grow" id="no">😅 Still learning</button>
@@ -426,6 +477,7 @@
       const flip = () => { card.classList.toggle('flipped'); $('#rate').style.visibility = 'visible'; sfx('tap'); };
       card.onclick = flip;
       card.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); } };
+      if (S.sound) speak(c.front);
       $('#yes').onclick = () => rate(c, true);
       $('#no').onclick = () => rate(c, false);
     }
@@ -473,7 +525,7 @@
         <div class="row small muted"><span class="grow">Question ${i + 1} of ${qs.length}</span>
           ${combo >= 2 ? `<span class="combo">🔥 Combo x${combo}</span>` : ''}</div>
         <div class="bar timer" id="tb" style="margin:8px 0 14px"><i id="tf" style="width:100%"></i></div>
-        <div class="qtext pop">${fmt(q.q)}</div>
+        <div class="qtext pop">${fmt(q.q)}${sayBtns(q.q)}</div>
         ${opts.map((o, k) => `<button class="opt" data-k="${k}">${fmt(o.t)}</button>`).join('')}
         <div id="after"></div>`;
       bindBack();
@@ -488,6 +540,7 @@
       }, 100);
 
       $$('.opt').forEach(b => b.onclick = () => answer(Number(b.dataset.k)));
+      if (S.sound) speak(q.q);
 
       function answer(k) {
         if (answered) return;
@@ -567,6 +620,7 @@
     bindBack();
 
     $$('.mi').forEach(b => b.onclick = () => {
+      speak(b.textContent); // Punjabi tiles say the word when tapped
       if (!sel || sel.dataset.side === b.dataset.side) {
         if (sel) sel.classList.remove('sel');
         sel = b; b.classList.add('sel'); sfx('tap');
@@ -943,6 +997,11 @@
         <label class="row"><span class="grow">🔊 Sound effects</span><input type="checkbox" id="snd" ${S.sound ? 'checked' : ''} style="width:22px;height:22px"></label>
       </div>
       <div class="panel stack">
+        <b>🗣️ Punjabi voice</b>
+        <div class="muted small" id="vc"></div>
+        <button class="btn ghost block" data-say="ਸਤ ਸ੍ਰੀ ਅਕਾਲ">🔊 Test: ਸਤ ਸ੍ਰੀ ਅਕਾਲ</button>
+      </div>
+      <div class="panel stack">
         <b>Change name / player</b>
         <input type="text" id="nm" maxlength="20" value="${esc(S.profile.name)}">
         <div class="avatars">${AVATARS.map(a => `<button data-a="${a}" class="${a === S.profile.avatar ? 'sel' : ''}">${a}</button>`).join('')}</div>
@@ -960,6 +1019,11 @@
       </div>`;
     bindBack();
     $('#snd').onchange = e => { S.sound = e.target.checked; save(); };
+    loadVoices();
+    const pa = findVoice('pa'), hi = findVoice('hi');
+    $('#vc').innerHTML = pa ? `Using Punjabi voice: ${esc(pa.name)}`
+      : hi ? `No Punjabi voice on this phone, so a Hindi voice reads the words (${esc(hi.name)}). Pronunciation is close but not perfect.`
+      : `No Punjabi or Hindi voice found. On Android: Settings → search <b>Text-to-speech</b> → Google → ⚙️ → <b>Install voice data</b> → Punjabi (or Hindi).`;
     $$('[data-a]').forEach(b => b.onclick = () => { $$('[data-a]').forEach(x => x.classList.remove('sel')); b.classList.add('sel'); });
     $('#sv').onclick = () => {
       const name = $('#nm').value.trim();

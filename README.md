@@ -50,6 +50,8 @@ GitHub Pages updates the live app about a minute after the push. The phone picks
 2. Add a `<script>` line for it in `index.html` (below chapter 1).
 3. Add the file to `FILES` in `sw.js` and bump `VERSION` (e.g. `swg-v2`) so phones pick up the update.
 
+Punjabi chapters go in `content/punjabi/` (see `ch00-first-steps.js`). Any Gurmukhi text automatically gets 🔊/🐢 listen buttons; write answers as `sound-spelling — English meaning`.
+
 Other subjects (`math`, `punjabi`) already exist in `content/registry.js`; use `SWG.addChapter('math', {...})`.
 
 **Important:** when editing a chapter, add new cards/questions at the **end** of each list — saved progress is linked to item positions.
