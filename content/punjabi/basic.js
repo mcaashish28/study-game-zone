@@ -1,11 +1,12 @@
-// Punjabi — Demo chapter: First Steps (for a beginner who cannot read Gurmukhi yet).
+// Punjabi — Basic level. Basic 1: First Steps (for a beginner who cannot read Gurmukhi yet).
 // Every Punjabi word gets a 🔊 button automatically. Write each answer as:
 // how it sounds (English letters) — meaning.
 // Sound spelling: aa as in "car", ee as in "see", oo as in "food", ai as in "bat", au as in "saw".
 SWG.addChapter('punjabi', {
-  id: 'pa-ch00',
-  number: 0,
-  title: 'First Steps (Demo)',
+  id: 'pa-ch00', // kept from the demo so her saved progress stays
+  level: 'Basic',
+  number: 1,
+  title: 'First Steps · ਪਹਿਲੇ ਕਦਮ',
   icon: '👋',
 
   topics: {

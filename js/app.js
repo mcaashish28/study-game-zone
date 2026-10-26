@@ -191,6 +191,7 @@
   // parallel Unicode blocks (ਕ U+0A15 -> क U+0915), so a word can be shifted letter by letter.
   function toDevanagari(s) {
     return s
+      .replace(/\u0A38\u0A3C/g, '\u0A36') // ਸ + nukta -> ਸ਼, so it maps to श (sh), not स
       .replace(/ੲ([ਿੀੇ])/g, (_, v) => ({ 'ਿ': 'इ', 'ੀ': 'ई', 'ੇ': 'ए' }[v]))
       .replace(/ੳ([ੁੂੋ])/g, (_, v) => ({ 'ੁ': 'उ', 'ੂ': 'ऊ', 'ੋ': 'ओ' }[v]))
       .replace(/ੱ([ਕ-ਹਖ਼-ਫ਼])/g, '$1੍$1') // addak doubles the next letter
@@ -369,14 +370,28 @@
   function renderSubject(id) {
     const s = SWG.subjects.find(x => x.id === id);
     if (!s) return renderHome();
-    $app.innerHTML = topbar(`${s.icon} ${esc(s.name)}`, '#/') + (s.chapters.length
-      ? s.chapters.map(c => `
+    const chapterBtn = c => `
         <button class="chapter" data-go="#/chapter/${c.id}">
           <span class="num">${c.number}</span>
           <span class="grow"><b>${esc(c.title)}</b>
             <div class="bar" style="margin-top:8px"><i style="width:${chapterProgress(c)}%"></i></div>
             <span class="muted small">${chapterProgress(c)}% complete</span></span>
-        </button>`).join('')
+        </button>`;
+    // Chapters with a `level` (Basic, Medium, …) are grouped; the first unfinished level starts open.
+    const levels = [...new Set(s.chapters.map(c => c.level || ''))];
+    let opened = false;
+    const groups = levels.map(lv => {
+      const chs = s.chapters.filter(c => (c.level || '') === lv);
+      if (!lv) return chs.map(chapterBtn).join('');
+      const pct = Math.round(chs.reduce((t, c) => t + chapterProgress(c), 0) / chs.length);
+      const open = !opened && pct < 100;
+      if (open) opened = true;
+      return `<details class="level" ${open ? 'open' : ''}>
+        <summary><b class="grow">${esc(lv)}</b><span class="muted small">${chs.length} chapters · ${pct}%</span></summary>
+        ${chs.map(chapterBtn).join('')}</details>`;
+    });
+    $app.innerHTML = topbar(`${s.icon} ${esc(s.name)}`, '#/') + (s.chapters.length
+      ? groups.join('')
       : `<div class="panel center"><div class="big-emoji">🔒</div><b>Coming soon!</b>
          <p class="muted">Chapters for ${esc(s.name)} will be added here.</p></div>`);
     bindBack();
@@ -392,7 +407,7 @@
       { m: 'balance', ic: '⚖️', name: 'Balance Lab', sub: `${ch.balance.filter(b => S.balanced[b.id]).length}/${ch.balance.length} balanced`, c: '#22d3ee' },
       { m: 'write', ic: '✍️', name: 'Answer Writing', sub: `${ch.written.filter(w => S.answers[w.id] != null).length}/${ch.written.length} practised`, c: '#f43f5e' }
     ].filter(x => ({ flash: ch.flashcards, quiz: ch.quiz, match: ch.match, balance: ch.balance, write: ch.written })[x.m].length);
-    $app.innerHTML = topbar(`Ch ${ch.number}: ${esc(ch.title)}`, '#/subject/' + ch.subject) + `
+    $app.innerHTML = topbar(`${ch.level ? esc(ch.level) : 'Ch'} ${ch.number}: ${esc(ch.title)}`, '#/subject/' + ch.subject) + `
       <div class="panel">
         <div class="row"><b class="grow">Chapter progress</b><b>${p}%</b></div>
         <div class="bar" style="margin-top:8px"><i style="width:${p}%"></i></div>

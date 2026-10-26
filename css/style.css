@@ -235,3 +235,13 @@ input[type=text] { width: 100%; padding: 14px; border-radius: 14px; background: 
   background: var(--panel-2); font-size: 1.3rem; cursor: pointer;
 }
 .say button:active { transform: scale(.92); }
+
+/* Chapter levels (Punjabi: Basic / Medium / Advanced) */
+details.level { margin-bottom: 14px; }
+details.level summary {
+  display: flex; align-items: center; gap: 10px; cursor: pointer; list-style: none;
+  padding: 12px 4px; font-size: 1.1rem;
+}
+details.level summary::-webkit-details-marker { display: none; }
+details.level summary::before { content: '▸'; color: var(--muted); transition: transform .2s; }
+details.level[open] summary::before { transform: rotate(90deg); }
