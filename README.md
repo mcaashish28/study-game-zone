@@ -46,7 +46,7 @@ GitHub Pages updates the live app about a minute after the push. The phone picks
 
 ## Add a new chapter
 
-1. Copy `content/science/ch01-chemical-reactions.js` to a new file, e.g. `content/science/ch02-acids-bases-salts.js`, and replace the content (`id` must be unique, e.g. `sci-ch02`). Leave `balance: []` empty for chapters without equations.
+1. Copy `content/science/ch01-chemical-reactions.js` to a new file, e.g. `content/science/ch03-metals-non-metals.js`, and replace the content (`id` must be unique, e.g. `sci-ch03`). Leave `balance: []` empty for chapters without equations.
 2. Add a `<script>` line for it in `index.html` (below chapter 1).
 3. Add the file to `FILES` in `sw.js` and bump `VERSION` (e.g. `swg-v2`) so phones pick up the update.
 
