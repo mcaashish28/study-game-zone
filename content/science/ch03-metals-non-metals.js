@@ -351,7 +351,7 @@ SWG.addChapter('science', {
     { marks: 3, q: 'Show the formation of NaCl and MgCl2 by the transfer of electrons.',
       keypoints: [
         { text: 'Na (2,8,1) loses 1 electron -> Na+; Cl (2,8,7) gains 1 -> Cl-', kw: ['na+', 'cl-'] },
-        { text: 'Mg (2,8,2) loses 2 electrons -> Mg²⁺', kw: ['mg2+|mg 2+|2 electron|two electron'] },
+        { text: 'Mg (2,8,2) loses 2 electrons -> Mg²⁺', kw: ['mg2+|mg 2+|mg²⁺|2e-|2 electron|two electron'] },
         { text: 'Two Cl atoms each gain 1 electron; Mg²⁺ + 2Cl- -> MgCl2', kw: ['2cl|two cl|2 cl'] }
       ],
       model: 'NaCl:\nNa (2,8,1) -> Na+ (2,8) + e-\nCl (2,8,7) + e- -> Cl- (2,8,8)\nNa+ + Cl- -> NaCl\n\nMgCl2:\nMg (2,8,2) -> Mg²⁺ (2,8) + 2e-\n2Cl (2,8,7) + 2e- -> 2Cl- (2,8,8)\nMg²⁺ + 2Cl- -> MgCl2\n\nThe oppositely charged ions are held by strong electrostatic attraction.' },
