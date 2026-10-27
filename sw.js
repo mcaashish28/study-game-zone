@@ -1,6 +1,6 @@
 // Offline support. Bump VERSION whenever any file changes (e.g. a new chapter),
 // so phones download the new files.
-const VERSION = 'swg-v9';
+const VERSION = 'swg-v10';
 const FILES = [
   './',
   'index.html',
@@ -10,6 +10,7 @@ const FILES = [
   'content/registry.js',
   'content/science/ch01-chemical-reactions.js',
   'content/science/ch02-acids-bases-salts.js',
+  'content/science/ch03-metals-non-metals.js',
   'content/punjabi/basic.js',
   'content/punjabi/medium.js',
   'icons/icon.svg',
