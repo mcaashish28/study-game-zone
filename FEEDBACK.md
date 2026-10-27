@@ -14,3 +14,4 @@ Paste her WhatsApp feedback / reports here, then note what we changed.
 | 2026-10-27 | Science | — | (Papa) Add Chapter 4 | Added Ch 4 Carbon and its Compounds: 71 flashcards, 76 quiz (incl. 12 Assertion–Reason), 6 Match rounds, 21 equations, 22 written incl. 5-mark and case-based |
 | 2026-10-27 | Science | — | (Papa) Add Chapter 5 | Added Ch 5 Life Processes: 78 flashcards, 81 quiz (incl. 12 Assertion–Reason), 6 Match rounds, 5 equations, 23 written incl. 5-mark and case-based |
 | 2026-10-27 | Science | — | (Papa) Add Chapter 6 | Added Ch 6 Control and Coordination: 62 flashcards, 72 quiz (incl. 12 Assertion–Reason), 6 Match rounds, 22 written incl. 5-mark and case-based (no equations, so Balance Lab is hidden) |
+| 2026-10-27 | Science | — | (Papa) Add Chapter 7 | Added Ch 7 How do Organisms Reproduce?: 63 flashcards, 70 quiz (incl. 12 Assertion–Reason), 6 Match rounds, 22 written incl. 5-mark and case-based |
