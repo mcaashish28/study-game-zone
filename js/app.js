@@ -621,8 +621,11 @@
   // ---------------------------------------------------------------- practice (maths)
 
   // Each item in ch.practice has gen(mk), which makes a fresh problem every time:
-  //   { q, fields: [{ label, answer, kind: 'number' | 'factors' }], hint, steps }  — she types the answer
-  //   { q, choices: [...], answer, steps }                                         — she taps an option
+  //   { q, fields: [{ label, answer, kind, show, signed }], hint, steps }  — she types the answer
+  //   { q, choices: [...], answer, steps }                                 — she taps an option
+  // kind: 'number' (default), 'factors' (answer is the number to factorise) or 'list' (answer is an array,
+  // any order). show: how to display the answer. signed: answers may be negative or fractions (shows − and / keys).
+  // Either form may add svg (e.g. mk.graph) to draw under the question.
   // A typed answer gets one more try (with the hint) before the worked steps are shown.
   function renderPractice(ch) {
     const gens = shuffle(ch.practice).sort((a, b) => (S.missed[b.id] ? 1 : 0) - (S.missed[a.id] ? 1 : 0));
@@ -638,12 +641,16 @@
         <div class="row small muted"><span class="grow">Problem ${i + 1} of ${plan.length}</span><span>${esc(ch.topics[g.topic])}</span></div>
         <div class="bar" style="margin:8px 0 14px"><i style="width:${i / plan.length * 100}%"></i></div>
         <div class="qtext pop">${fmt(p.q)}</div>
+        ${p.svg ? `<div class="graph pop">${p.svg}</div>` : ''}
         ${p.choices
           ? p.choices.map((t, k) => `<button class="opt" data-k="${k}">${fmt(t)}</button>`).join('')
           : `${fields.map((f, k) => `<label class="pfield"><span>${esc(f.label || 'Answer')}</span>
               <input type="text" data-f="${k}" autocomplete="off" autocapitalize="off" spellcheck="false"
-                inputmode="${f.kind === 'factors' ? 'text' : 'decimal'}" placeholder="${f.kind === 'factors' ? 'e.g. 2^2 × 3' : ''}"></label>`).join('')}
+                inputmode="${f.kind === 'factors' || f.kind === 'list' || f.signed ? 'text' : 'decimal'}"
+                placeholder="${f.kind === 'factors' ? 'e.g. 2^2 × 3' : f.kind === 'list' ? 'e.g. 3, −1/2' : ''}"></label>`).join('')}
             ${fields.some(f => f.kind === 'factors') ? `<div class="keys"><button data-key=" × ">×</button><button data-key="^">^ power</button></div>` : ''}
+            ${fields.some(f => f.kind === 'list' || f.signed) ? `<div class="keys"><button data-key="−">−</button><button data-key="/">/</button>
+              ${fields.some(f => f.kind === 'list') ? '<button data-key=", ">,</button>' : ''}</div>` : ''}
             <button class="btn block" id="check">Check ✓</button>`}
         <div id="after"></div>`;
       bindBack();
@@ -675,11 +682,25 @@
           if (notPrime.length) return `${notPrime.join(', ')} ${notPrime.length > 1 ? 'are' : 'is'} not prime. Break it down further.`;
           return '';
         }
+        if (f.kind === 'list') {
+          const vs = String(value).replace(/[a-zα-ω]\s*=/gi, ' ').split(/[,;&]|\band\b|\bor\b/i)
+            .map(x => x.trim()).filter(Boolean).map(SWG.mk.parseNumber);
+          if (vs.some(isNaN)) return 'Type numbers like 3, −1/2.';
+          if (vs.length !== f.answer.length) return `Give ${f.answer.length} answers, separated by a comma.`;
+          const left = f.answer.slice();
+          for (const v of vs) {
+            const j = left.findIndex(a => Math.abs(a - v) < 1e-9);
+            if (j < 0) return 'Not quite.';
+            left.splice(j, 1);
+          }
+          return '';
+        }
         const v = SWG.mk.parseNumber(value);
         if (isNaN(v)) return 'Type a number.';
         return Math.abs(v - f.answer) < 1e-9 ? '' : 'Not quite.';
       }
-      const shown = f => f.kind === 'factors' ? SWG.mk.fstr(f.answer) : String(f.answer);
+      const shown = f => f.show != null ? f.show : f.kind === 'factors' ? SWG.mk.fstr(f.answer)
+        : f.kind === 'list' ? f.answer.map(SWG.mk.num).join(', ') : SWG.mk.num(f.answer);
 
       function check() {
         if (over) return;
