@@ -6,6 +6,7 @@ A phone-friendly study game (PWA) for CBSE Class 10. Each chapter gets five game
 |---|---|
 | 🃏 Flashcards | Flip cards; cards marked "Still learning" come back sooner |
 | ⚡ Quiz Battle | 10 timed MCQs with combos; wrong questions come back first next time |
+| 🧮 Practice | Maths only: 10 problems with new numbers every round; type the answer, get a hint and a second try, then the worked steps |
 | 🧩 Match Up | Tap-to-match pairs |
 | ⚖️ Balance Lab | Balance chemical equations with live atom counts (chemistry chapters) |
 | ✍️ Answer Writing | Board-style questions, key-point checklist and model answer |
@@ -52,6 +53,6 @@ GitHub Pages updates the live app about a minute after the push. The phone picks
 
 Punjabi chapters go in `content/punjabi/` (see `ch00-first-steps.js`). Any Gurmukhi text automatically gets 🔊/🐢 listen buttons; write answers as `sound-spelling — English meaning`.
 
-Other subjects (`math`, `punjabi`) already exist in `content/registry.js`; use `SWG.addChapter('math', {...})`.
+Maths chapters go in `content/math/` (see `ch01-real-numbers.js`). Write powers as Unicode superscripts (x², 2³), because a digit straight after a letter is shown as a subscript. A `practice` list of generators powers the 🧮 Practice mode: each `gen(mk)` returns a fresh problem, using the helpers in `js/mathkit.js`.
 
 **Important:** when editing a chapter, add new cards/questions at the **end** of each list — saved progress is linked to item positions.

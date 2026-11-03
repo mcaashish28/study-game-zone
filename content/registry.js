@@ -16,5 +16,6 @@ SWG.addChapter = function (subjectId, ch) {
   ch.quiz.forEach((q, i) => { q.id = ch.id + ':q' + i; });
   ch.balance.forEach((b, i) => { b.id = ch.id + ':b' + i; });
   ch.written.forEach((w, i) => { w.id = ch.id + ':w' + i; });
+  (ch.practice || []).forEach((p, i) => { p.id = ch.id + ':p' + i; });
   subject.chapters.push(ch);
 };

@@ -10,8 +10,9 @@
   const QUIZ_SECONDS = 20;
   const AR_SECONDS = 35;  // Assertion–Reason questions need more reading time
   const FLASH_LEN = 10;
+  const PRACTICE_LEN = 10;
   const MOODS = ['😍', '🙂', '😐', '😕', '😫'];
-  const MODE_NAMES = { flash: 'Flashcards', quiz: 'Quiz Battle', match: 'Match Up', balance: 'Balance Lab', write: 'Answer Writing' };
+  const MODE_NAMES = { flash: 'Flashcards', quiz: 'Quiz Battle', match: 'Match Up', balance: 'Balance Lab', write: 'Answer Writing', practice: 'Practice' };
 
   // ---------------------------------------------------------------- state
 
@@ -27,7 +28,7 @@
       drafts: {},     // writtenId -> text
       balanced: {},   // balanceId -> true
       badges: [],
-      stats: { quizzes: 0, perfect: 0, matches: 0, cardsSeen: 0 },
+      stats: { quizzes: 0, perfect: 0, matches: 0, cardsSeen: 0, practice: 0 },
       days: {},       // yyyy-mm-dd -> xp earned that day
       feedback: [],   // { date, area, mood, text }
       ratings: []     // { date, mode, chapter, mood } — quick taps after each game
@@ -120,6 +121,7 @@
     const parts = [
       part(ch.flashcards, c => (S.cards[c.id] || 0) >= 3),
       ch.quiz.length ? Math.min(1, (S.best[ch.id + ':quiz'] || 0) / Math.min(QUIZ_LEN, ch.quiz.length)) : null,
+      (ch.practice || []).length ? Math.min(1, (S.best[ch.id + ':practice'] || 0) / PRACTICE_LEN) : null,
       part(ch.balance, b => S.balanced[b.id]),
       part(ch.written, w => S.answers[w.id] != null)
     ].filter(p => p !== null);
@@ -140,7 +142,8 @@
     { id: 'streak7', e: '🏆', name: '7-Day Streak', test: () => S.streak.count >= 7 },
     { id: 'lv5', e: '👑', name: 'Level 5', test: () => level() >= 5 },
     { id: 'chapter', e: '🎓', name: 'Chapter Champion', test: () => allChapters().some(c => chapterProgress(c) >= 90) },
-    { id: 'xp1000', e: '💎', name: '1000 XP', test: () => S.xp >= 1000 }
+    { id: 'xp1000', e: '💎', name: '1000 XP', test: () => S.xp >= 1000 },
+    { id: 'solver', e: '🧮', name: 'Problem Solver', test: () => S.stats.practice >= 5 }
   ];
   function checkBadges() {
     for (const b of BADGES) {
@@ -269,7 +272,7 @@
     if (page === 'subject') return renderSubject(a);
     if (page === 'chapter' && ch) return renderChapter(ch);
     if (page === 'play' && ch) {
-      const modes = { flash: renderFlash, quiz: renderQuiz, match: renderMatch, balance: renderBalance, write: renderWriteList };
+      const modes = { flash: renderFlash, quiz: renderQuiz, match: renderMatch, balance: renderBalance, write: renderWriteList, practice: renderPractice };
       if (modes[b]) return modes[b](ch);
     }
     if (page === 'write' && ch) return renderWrite(ch, Number(b));
@@ -403,10 +406,11 @@
     const modes = [
       { m: 'flash', ic: '🃏', name: 'Flashcards', sub: `${cardsMastered(ch)}/${ch.flashcards.length} mastered`, c: '#7c5cff' },
       { m: 'quiz', ic: '⚡', name: 'Quiz Battle', sub: `${ch.quiz.length} questions · Best ${S.best[ch.id + ':quiz'] || 0}/${QUIZ_LEN}`, c: '#facc15' },
+      { m: 'practice', ic: '🧮', name: 'Practice', sub: `New sums every time · Best ${S.best[ch.id + ':practice'] || 0}/${PRACTICE_LEN}`, c: '#38bdf8' },
       { m: 'match', ic: '🧩', name: 'Match Up', sub: `${ch.match.length} rounds`, c: '#22c55e' },
       { m: 'balance', ic: '⚖️', name: 'Balance Lab', sub: `${ch.balance.filter(b => S.balanced[b.id]).length}/${ch.balance.length} balanced`, c: '#22d3ee' },
       { m: 'write', ic: '✍️', name: 'Answer Writing', sub: `${ch.written.filter(w => S.answers[w.id] != null).length}/${ch.written.length} practised`, c: '#f43f5e' }
-    ].filter(x => ({ flash: ch.flashcards, quiz: ch.quiz, match: ch.match, balance: ch.balance, write: ch.written })[x.m].length);
+    ].filter(x => ({ flash: ch.flashcards, quiz: ch.quiz, practice: ch.practice || [], match: ch.match, balance: ch.balance, write: ch.written })[x.m].length);
     $app.innerHTML = topbar(`${ch.level ? esc(ch.level) : 'Ch'} ${ch.number}: ${esc(ch.title)}`, '#/subject/' + ch.subject) + `
       <div class="panel">
         <div class="row"><b class="grow">Chapter progress</b><b>${p}%</b></div>
@@ -609,6 +613,147 @@
         extra: wrongList.length ? `<div class="panel"><b>Revise these:</b><ul class="small" style="padding-left:18px;margin:8px 0 0">
           ${wrongList.map(q => `<li style="margin-bottom:6px">${fmt(q.q)}<br><span style="color:var(--good)">→ ${fmt(q.options[q.answer])}</span></li>`).join('')}</ul></div>` : '',
         again: () => renderQuiz(ch)
+      });
+    }
+    show();
+  }
+
+  // ---------------------------------------------------------------- practice (maths)
+
+  // Each item in ch.practice has gen(mk), which makes a fresh problem every time:
+  //   { q, fields: [{ label, answer, kind: 'number' | 'factors' }], hint, steps }  — she types the answer
+  //   { q, choices: [...], answer, steps }                                         — she taps an option
+  // A typed answer gets one more try (with the hint) before the worked steps are shown.
+  function renderPractice(ch) {
+    const gens = shuffle(ch.practice).sort((a, b) => (S.missed[b.id] ? 1 : 0) - (S.missed[a.id] ? 1 : 0));
+    const plan = Array.from({ length: PRACTICE_LEN }, (_, k) => gens[k % gens.length]);
+    let i = 0, points = 0, correct = 0;
+    const wrongList = [];
+
+    function show() {
+      const g = plan[i], p = g.gen(SWG.mk);
+      const fields = p.fields || [];
+      let tries = 0, over = false;
+      $app.innerHTML = topbar('🧮 Practice', '#/chapter/' + ch.id, `<span class="pill">⭐ ${points}</span>`) + `
+        <div class="row small muted"><span class="grow">Problem ${i + 1} of ${plan.length}</span><span>${esc(ch.topics[g.topic])}</span></div>
+        <div class="bar" style="margin:8px 0 14px"><i style="width:${i / plan.length * 100}%"></i></div>
+        <div class="qtext pop">${fmt(p.q)}</div>
+        ${p.choices
+          ? p.choices.map((t, k) => `<button class="opt" data-k="${k}">${fmt(t)}</button>`).join('')
+          : `${fields.map((f, k) => `<label class="pfield"><span>${esc(f.label || 'Answer')}</span>
+              <input type="text" data-f="${k}" autocomplete="off" autocapitalize="off" spellcheck="false"
+                inputmode="${f.kind === 'factors' ? 'text' : 'decimal'}" placeholder="${f.kind === 'factors' ? 'e.g. 2^2 × 3' : ''}"></label>`).join('')}
+            ${fields.some(f => f.kind === 'factors') ? `<div class="keys"><button data-key=" × ">×</button><button data-key="^">^ power</button></div>` : ''}
+            <button class="btn block" id="check">Check ✓</button>`}
+        <div id="after"></div>`;
+      bindBack();
+
+      const inputs = $$('[data-f]');
+      let last = inputs[0];
+      inputs.forEach(el => {
+        el.onfocus = () => { last = el; };
+        el.onkeydown = e => { if (e.key === 'Enter') check(); };
+      });
+      $$('[data-key]').forEach(b => b.onclick = () => {
+        const el = last, at = el.selectionStart ?? el.value.length;
+        el.value = el.value.slice(0, at) + b.dataset.key + el.value.slice(el.selectionEnd ?? at);
+        el.focus();
+        el.setSelectionRange(at + b.dataset.key.length, at + b.dataset.key.length);
+      });
+      $$('.opt').forEach(b => b.onclick = () => choose(Number(b.dataset.k)));
+      if ($('#check')) $('#check').onclick = check;
+      if (inputs[0] && matchMedia('(pointer: fine)').matches) inputs[0].focus();
+
+      // Returns '' when right, otherwise a short reason.
+      function mark(f, value) {
+        if (f.kind === 'factors') {
+          const fs = SWG.mk.parseFactors(value);
+          if (!fs) return 'Write it like 2^2 × 3 or 2 × 2 × 3.';
+          const product = fs.reduce((t, x) => t * Math.pow(x.base, x.exp), 1);
+          if (product !== f.answer) return `Those multiply to ${product}, not ${f.answer}.`;
+          const notPrime = fs.filter(x => !SWG.mk.isPrime(x.base)).map(x => x.base);
+          if (notPrime.length) return `${notPrime.join(', ')} ${notPrime.length > 1 ? 'are' : 'is'} not prime. Break it down further.`;
+          return '';
+        }
+        const v = SWG.mk.parseNumber(value);
+        if (isNaN(v)) return 'Type a number.';
+        return Math.abs(v - f.answer) < 1e-9 ? '' : 'Not quite.';
+      }
+      const shown = f => f.kind === 'factors' ? SWG.mk.fstr(f.answer) : String(f.answer);
+
+      function check() {
+        if (over) return;
+        if (inputs.some(el => !el.value.trim())) { toast('Fill in every box first ✏️'); return; }
+        const why = fields.map((f, k) => mark(f, inputs[k].value));
+        inputs.forEach((el, k) => { el.classList.toggle('right', !why[k]); el.classList.toggle('wrong', !!why[k]); });
+        if (why.every(w => !w)) return finish(true, tries === 0 ? 15 : 7);
+        tries++;
+        if (tries < 2) {
+          sfx('bad');
+          const reasons = [...new Set(why.filter(Boolean))].join(' ');
+          $('#after').innerHTML = `<div class="panel explain pop"><b>❌ ${esc(reasons)} Try once more!</b>
+            ${p.hint ? `<div class="muted" style="margin-top:4px">💡 ${fmt(p.hint)}</div>` : ''}</div>`;
+          const firstWrong = inputs[why.findIndex(Boolean)];
+          firstWrong.select();
+          return;
+        }
+        finish(false, 0);
+      }
+
+      function choose(k) {
+        if (over) return;
+        $$('.opt').forEach((b, j) => {
+          b.disabled = true;
+          if (j === p.answer) b.classList.add('right');
+          else if (j === k) b.classList.add('wrong');
+        });
+        finish(k === p.answer, k === p.answer ? 10 : 0);
+      }
+
+      function finish(ok, gain) {
+        over = true;
+        inputs.forEach(el => { el.readOnly = true; });
+        if ($('#check')) $('#check').remove();
+        $$('[data-key]').forEach(b => { b.disabled = true; });
+        recordTopic(ch, g.topic, ok);
+        const answerText = p.choices ? p.choices[p.answer] : fields.map(f => (fields.length > 1 ? f.label + ' = ' : '') + shown(f)).join(', ');
+        if (ok) {
+          correct++;
+          points += gain;
+          delete S.missed[g.id];
+          sfx('good');
+        } else {
+          S.missed[g.id] = true;
+          wrongList.push({ q: p.q, a: answerText });
+          sfx('bad');
+        }
+        save();
+        $('#after').innerHTML = `
+          <div class="panel explain pop"><b>${ok ? `✅ Correct! +${gain}` : `The answer is ${fmt(answerText)}`}</b>
+            <div class="muted" style="margin-top:6px;white-space:pre-line">${fmt(p.steps)}</div></div>
+          <button class="btn block" id="next">${i + 1 < plan.length ? 'Next problem →' : 'See results 🏁'}</button>`;
+        $('#next').onclick = () => { i++; i < plan.length ? show() : done(); };
+        $('#next').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    function done() {
+      S.stats.practice++;
+      const key = ch.id + ':practice';
+      const newBest = correct > (S.best[key] || 0);
+      if (newBest) S.best[key] = correct;
+      const xp = Math.round(points / 2) + correct * 2;
+      addXP(xp);
+      const stars = correct >= 9 ? 3 : correct >= 7 ? 2 : correct >= 5 ? 1 : 0;
+      renderResult({
+        ch, mode: 'practice', xp, stars,
+        emoji: stars === 3 ? '🏆' : stars === 2 ? '🥳' : stars === 1 ? '🙂' : '💪',
+        title: `${correct} / ${plan.length} solved`,
+        text: (newBest ? '🎉 New best score! ' : '') + (stars >= 2 ? 'Superb!' : 'Keep practising — every round has new numbers.'),
+        extra: wrongList.length ? `<div class="panel"><b>Look at these again:</b><ul class="small" style="padding-left:18px;margin:8px 0 0">
+          ${wrongList.map(w => `<li style="margin-bottom:6px">${fmt(w.q)}<br><span style="color:var(--good)">→ ${fmt(w.a)}</span></li>`).join('')}</ul></div>` : '',
+        againLabel: '🔁 New problems',
+        again: () => renderPractice(ch)
       });
     }
     show();
@@ -905,6 +1050,7 @@
           <b>${esc(ch.title)}</b> <span class="muted small">· ${chapterProgress(ch)}% complete</span>
           <div class="muted small" style="margin:4px 0 12px">Cards mastered ${cardsMastered(ch)}/${ch.flashcards.length} ·
             Best quiz ${S.best[ch.id + ':quiz'] || 0}/${QUIZ_LEN} ·
+            ${ch.practice ? `Best practice ${S.best[ch.id + ':practice'] || 0}/${PRACTICE_LEN} ·` : ''}
             Answers ${ch.written.filter(w => S.answers[w.id] != null).length}/${ch.written.length}</div>
           ${rows.map(r => `<div class="topicrow"><div class="row small"><span class="grow">${esc(r.name)}</span>
             <span class="muted">${r.n ? r.pct + '% of ' + r.n : 'not tried'}</span></div>
@@ -912,7 +1058,7 @@
           ${weak.length ? `<div class="panel explain small" style="margin:12px 0 0">⚠️ Needs practice: <b>${weak.map(esc).join(', ')}</b></div>` : ''}
         </div>`;
       }).join('')}
-      <p class="muted small center">Topic scores come from Quiz Battle and Flashcards (first try).</p>
+      <p class="muted small center">Topic scores come from Quiz Battle, Practice and Flashcards (first try).</p>
       ${feedbackSummary()}`;
     bindBack();
     const all = $('#sendall');
@@ -985,7 +1131,8 @@
 
   function feedbackReport() {
     const lines = [`📊 Study Game Zone report — ${S.profile.name}`, `Level ${level()} · ${S.xp} XP · streak ${currentStreak()} days`];
-    for (const ch of allChapters()) lines.push(`${ch.title}: ${chapterProgress(ch)}% complete, best quiz ${S.best[ch.id + ':quiz'] || 0}/${QUIZ_LEN}`);
+    for (const ch of allChapters()) lines.push(`${ch.title}: ${chapterProgress(ch)}% complete, best quiz ${S.best[ch.id + ':quiz'] || 0}/${QUIZ_LEN}` +
+      (ch.practice ? `, best practice ${S.best[ch.id + ':practice'] || 0}/${PRACTICE_LEN}` : ''));
     const rs = ratingSummary();
     if (rs.length) lines.push('', 'Fun ratings (out of 5):', ...rs.map(r => `• ${r.mode}: ${r.avg.toFixed(1)} (${r.n} ratings)`));
     if (S.feedback.length) lines.push('', 'Feedback:', ...S.feedback.map(f => '• ' + feedbackLine(f).replace('\n', ' — ')));

@@ -138,6 +138,182 @@ SWG.addChapter('math', {
     { topic: 'ops', q: 'To prove 3 + 2√5 irrational, we get √5 = …', options: ['(a − 3b)/2b', '(a + 3b)/2b', '2a/3b', 'a/b − 3'], answer: 0, explain: '3 + 2√5 = a/b → 2√5 = a/b − 3 = (a − 3b)/b → √5 = (a − 3b)/2b' }
   ],
 
+  // Practice: each gen(mk) makes a new problem every time (see js/mathkit.js for mk).
+  practice: [
+    { topic: 'fta', gen(mk) {
+      const n = mk.composite([2, 2, 2, 3, 3, 5, 7, 11, 13], mk.ri(3, 5), 3000);
+      const lines = [];
+      let m = n;
+      for (let d = 2; m > 1; d++) while (m % d === 0) { lines.push(`${m} ÷ ${d} = ${m / d}`); m /= d; }
+      return {
+        q: `Write ${n} as a product of its prime factors.`,
+        fields: [{ label: `${n} =`, kind: 'factors', answer: n }],
+        hint: 'Keep dividing by the smallest prime that goes in: 2, then 3, 5, 7, 11…',
+        steps: lines.join('\n') + `\nSo ${n} = ${mk.fstr(n)}`
+      };
+    } },
+    { topic: 'hcf', gen(mk) {
+      let a, b, g;
+      do {
+        g = mk.composite([2, 2, 3, 3, 5, 7], mk.ri(1, 3), 60);
+        const m = mk.ri(2, 15), k = mk.ri(2, 15);
+        a = g * m; b = g * k;
+        if (m === k || mk.gcd(m, k) !== 1) a = 0;
+      } while (!a || a > 600 || b > 600);
+      const l = mk.lcm(a, b);
+      return {
+        q: `Find the HCF and LCM of ${a} and ${b} by prime factorisation.`,
+        fields: [{ label: 'HCF', answer: g }, { label: 'LCM', answer: l }],
+        hint: `${a} = ${mk.fstr(a)} and ${b} = ${mk.fstr(b)}.\nHCF: smallest power of each COMMON prime. LCM: greatest power of EVERY prime.`,
+        steps: `${a} = ${mk.fstr(a)}\n${b} = ${mk.fstr(b)}\nHCF = ${mk.feq(g)}\nLCM = ${mk.feq(l)}`
+      };
+    } },
+    { topic: 'hcf', gen(mk) {
+      let nums, h, l;
+      do {
+        const g = mk.pick([2, 3, 4, 5, 6]);
+        nums = [mk.ri(2, 12), mk.ri(2, 12), mk.ri(2, 12)].map(x => x * g);
+        h = nums.reduce(mk.gcd);
+        l = nums.reduce(mk.lcm);
+      } while (new Set(nums).size < 3 || l > 3000);
+      nums.sort((x, y) => x - y);
+      return {
+        q: `Find the HCF and LCM of ${nums.join(', ')}.`,
+        fields: [{ label: 'HCF', answer: h }, { label: 'LCM', answer: l }],
+        hint: nums.map(x => `${x} = ${mk.fstr(x)}`).join('\n'),
+        steps: nums.map(x => `${x} = ${mk.fstr(x)}`).join('\n') + `\nHCF = ${h === 1 ? '1 (no common prime)' : mk.feq(h)}\nLCM = ${mk.feq(l)}`
+      };
+    } },
+    { topic: 'hcf', gen(mk) {
+      let a, b, g;
+      do {
+        g = mk.pick([2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13]);
+        const m = mk.ri(2, 13), k = mk.ri(2, 13);
+        a = g * m; b = g * k;
+        if (m === k || mk.gcd(m, k) !== 1) a = 0;
+      } while (!a);
+      const l = mk.lcm(a, b);
+      if (Math.random() < 0.5) return {
+        q: `The HCF of ${a} and ${b} is ${g}. Find their LCM.`,
+        fields: [{ label: 'LCM', answer: l }],
+        hint: 'HCF × LCM = product of the two numbers.',
+        steps: `LCM = (${a} × ${b}) ÷ HCF\n= ${a * b} ÷ ${g}\n= ${l}`
+      };
+      return {
+        q: `Two numbers have HCF ${g} and LCM ${l}. One of them is ${a}. Find the other.`,
+        fields: [{ label: 'Other number', answer: b }],
+        hint: 'HCF × LCM = product of the two numbers.',
+        steps: `HCF × LCM = ${a} × other\n${g} × ${l} = ${a} × other\nother = ${g * l} ÷ ${a} = ${b}`
+      };
+    } },
+    { topic: 'word', gen(mk) {
+      let xs, l;
+      const kind = mk.pick(['bells', 'track', 'divisible', 'remainder']);
+      const count = kind === 'track' ? 2 : 3;
+      do {
+        xs = Array.from({ length: count }, () => mk.pick([4, 5, 6, 8, 9, 10, 12, 15, 16, 18, 20, 24]));
+        l = xs.reduce(mk.lcm);
+      } while (new Set(xs).size < count || l > 360 || xs.includes(l));
+      xs.sort((x, y) => x - y);
+      const r = mk.ri(1, xs[0] - 1);
+      const list = xs.slice(0, -1).join(', ') + ' and ' + xs[xs.length - 1];
+      const fact = xs.map(x => `${x} = ${mk.fstr(x)}`).join('\n') + `\nLCM = ${mk.feq(l)}`;
+      const t = {
+        bells: { q: `Three bells ring every ${list} minutes. They ring together at 9:00 am. After how many minutes will they next ring together?`, unit: 'minutes', answer: l, end: `They ring together again after ${l} minutes.` },
+        track: { q: `On a circular track, Aman takes ${xs[0]} minutes and Simran takes ${xs[1]} minutes for one round. They start together from the same point, in the same direction. After how many minutes will they meet again at the start?`, unit: 'minutes', answer: l, end: `They meet at the start after ${l} minutes.` },
+        divisible: { q: `Find the smallest number that is exactly divisible by ${list}.`, unit: '', answer: l, end: `The smallest such number is ${l}.` },
+        remainder: { q: `Find the smallest number which, when divided by ${list}, leaves remainder ${r} each time.`, unit: '', answer: l + r, end: `Add the remainder: ${l} + ${r} = ${l + r}` }
+      }[kind];
+      return {
+        q: t.q,
+        fields: [{ label: t.unit ? `Answer (${t.unit})` : 'Answer', answer: t.answer }],
+        hint: kind === 'remainder' ? 'Find the LCM first, then add the remainder.' : '"Together again" or "smallest" means LCM.',
+        steps: fact + '\n' + t.end
+      };
+    } },
+    { topic: 'word', gen(mk) {
+      const kind = mk.pick(['columns', 'ribbons', 'remainder', 'two-remainders']);
+      const g = mk.pick([4, 6, 8, 9, 12, 14, 15, 16, 18, 21, 24]);
+      let m, k, j;
+      do { m = mk.ri(2, 20); k = mk.ri(2, 20); j = mk.ri(2, 20); } while (m === k || k === j || m === j || mk.gcd(m, k) !== 1);
+      const steps = (nums) => nums.map(x => `${x} = ${mk.fstr(x)}`).join('\n') + `\nHCF = ${mk.feq(g)}`;
+      if (kind === 'columns') {
+        const army = g * Math.max(m, k) * mk.pick([1, 1, 2]) , band = g * Math.min(m, k);
+        const h = mk.gcd(army, band);
+        return {
+          q: `An army group of ${army} members marches behind a band of ${band} members. Both groups must march in the same number of columns. What is the maximum number of columns?`,
+          fields: [{ label: 'Columns', answer: h }],
+          hint: '"Maximum number that divides both" means HCF.',
+          steps: `${army} = ${mk.fstr(army)}\n${band} = ${mk.fstr(band)}\nHCF = ${mk.feq(h)}\nMaximum columns = ${h}`
+        };
+      }
+      if (kind === 'ribbons') {
+        const ls = [g * m, g * k, g * j].sort((x, y) => x - y);
+        const h = ls.reduce(mk.gcd);
+        return {
+          q: `Three ribbons are ${ls[0]} cm, ${ls[1]} cm and ${ls[2]} cm long. They are cut into pieces of equal length, as long as possible, with nothing left over. How long is each piece?`,
+          fields: [{ label: 'Length (cm)', answer: h }],
+          hint: '"Greatest length that measures each exactly" means HCF.',
+          steps: ls.map(x => `${x} = ${mk.fstr(x)}`).join('\n') + `\nHCF = ${mk.feq(h)}\nEach piece is ${h} cm.`
+        };
+      }
+      if (kind === 'remainder') {
+        const r = mk.ri(1, Math.min(9, g - 1));
+        const A = g * m + r, B = g * k + r;
+        return {
+          q: `Find the largest number that divides ${A} and ${B}, leaving remainder ${r} in each case.`,
+          fields: [{ label: 'Answer', answer: g }],
+          hint: `First subtract the remainder from each number, then find the HCF.`,
+          steps: `${A} − ${r} = ${A - r}, ${B} − ${r} = ${B - r}\n` + steps([A - r, B - r]) + `\nThe largest such number is ${g}.`
+        };
+      }
+      const r1 = mk.ri(1, g - 1), r2 = mk.ri(1, g - 1);
+      const A = g * m + r1, B = g * k + r2;
+      return {
+        q: `Find the largest number that divides ${A} and ${B}, leaving remainders ${r1} and ${r2} respectively.`,
+        fields: [{ label: 'Answer', answer: g }],
+        hint: `Subtract each remainder from its own number, then find the HCF.`,
+        steps: `${A} − ${r1} = ${A - r1}, ${B} − ${r2} = ${B - r2}\n` + steps([A - r1, B - r2]) + `\nThe largest such number is ${g}.`
+      };
+    } },
+    { topic: 'ops', gen(mk) {
+      const p = mk.pick([2, 3, 5, 6, 7, 10, 11]), q = mk.pick([2, 3, 5, 7].filter(x => x !== p));
+      const a = mk.ri(2, 9), s = mk.ri(2, 4);
+      const items = [
+        [`√${a * a}`, true, `√${a * a} = ${a}, which is rational.`],
+        [`√${p} × √${p * s * s}`, true, `√${p} × √${p * s * s} = √${p * p * s * s} = ${p * s}, which is rational.`],
+        [`(${a} + √${p})(${a} − √${p})`, true, `(a + b)(a − b) = a² − b²\n= ${a * a} − ${p} = ${a * a - p}, which is rational.`],
+        [`(${a} + √${p}) − √${p}`, true, `The √${p} cancels, leaving ${a}, which is rational.`],
+        [`${a} + √${p}`, false, `rational + irrational = irrational.`],
+        [`${a} − √${p}`, false, `rational − irrational = irrational.`],
+        [`${a}√${p}`, false, `non-zero rational × irrational = irrational.`],
+        [`√${p}/${a}`, false, `irrational ÷ non-zero rational = irrational.`],
+        [`√${p} + √${q}`, false, `√${p} + √${q} cannot be simplified to a fraction p/q. It is irrational.`],
+        [`(√${p} + ${a})²`, false, `= ${p} + ${2 * a}√${p} + ${a * a} = ${p + a * a} + ${2 * a}√${p}\nrational + irrational = irrational.`],
+        [`√${p * s * s}`, false, `√${p * s * s} = ${s}√${p}, which is irrational.`]
+      ];
+      const [expr, rational, why] = mk.pick(items);
+      return {
+        q: `Is ${expr} rational or irrational?`,
+        choices: ['Rational', 'Irrational'],
+        answer: rational ? 0 : 1,
+        steps: why
+      };
+    } },
+    { topic: 'fta', gen(mk) {
+      const k = mk.pick([4, 6, 8, 9, 12, 14, 15, 18, 10, 20, 30]);
+      const yes = k % 10 === 0;
+      return {
+        q: `Can ${k}ⁿ end with the digit 0 for some natural number n?`,
+        choices: ['Yes', 'No'],
+        answer: yes ? 0 : 1,
+        steps: `To end with 0, a number must be divisible by 10 = 2 × 5.\n${k} = ${mk.fstr(k)}\n` + (yes
+          ? `${k} has both 2 and 5 as factors, so ${k}ⁿ always ends with 0.`
+          : `${k}ⁿ = (${mk.fstr(k)})ⁿ has ${k % 5 === 0 ? 'no 2' : 'no 5'} among its prime factors. By the uniqueness of prime factorisation, ${k}ⁿ can never end with 0.`)
+      };
+    } }
+  ],
+
   match: [
     { title: 'Prime Factorisation', pairs: [
       ['140', '2² × 5 × 7'],

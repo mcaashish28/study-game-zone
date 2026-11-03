@@ -143,6 +143,15 @@ details.notes li { margin-bottom: 8px; }
 .explain { border-left: 4px solid var(--accent-2); }
 .combo { color: var(--gold); font-weight: 900; }
 
+/* ---------- Practice ---------- */
+.pfield { display: block; margin-bottom: 12px; }
+.pfield span { display: block; font-weight: 700; font-size: .9rem; color: var(--muted); margin-bottom: 6px; }
+.pfield input { font-size: 1.2rem; font-weight: 700; }
+.pfield input.right { border-color: var(--good); background: rgba(34, 197, 94, .12); }
+.pfield input.wrong { border-color: var(--bad); background: rgba(244, 63, 94, .12); }
+.keys { display: flex; gap: 8px; margin: -2px 0 14px; }
+.keys button { flex: 1; padding: 10px; border-radius: 12px; background: var(--panel-2); border: 1px solid var(--line); font-weight: 800; font-size: 1.05rem; }
+
 /* ---------- Match ---------- */
 .match { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .match .col { display: flex; flex-direction: column; gap: 10px; }
