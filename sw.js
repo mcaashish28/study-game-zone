@@ -1,6 +1,6 @@
 // Offline support. Bump VERSION whenever any file changes (e.g. a new chapter),
 // so phones download the new files.
-const VERSION = 'swg-v29';
+const VERSION = 'swg-v30';
 const FILES = [
   './',
   'index.html',
@@ -34,6 +34,7 @@ const FILES = [
   'content/math/ch10-circles.js',
   'content/math/ch11-areas-circles.js',
   'content/math/ch12-surface-areas-volumes.js',
+  'content/math/ch13-statistics.js',
   'content/punjabi/basic.js',
   'content/punjabi/medium.js',
   'icons/icon.svg',
