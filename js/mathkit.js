@@ -53,7 +53,7 @@ SWG.mk = (function () {
   }
   // Reads "36", "-4", "3/4", "2.5", "36 min" as a number (NaN if it can't).
   function parseNumber(s) {
-    s = String(s).trim().replace(/[\s,]/g, '').replace(/−/g, '-').replace(/[a-z]+\.?$/i, '');
+    s = String(s).trim().replace(/[\s,°]/g, '').replace(/−/g, '-').replace(/[a-z]+\.?$/i, '');
     const f = s.match(/^(-?\d+(?:\.\d+)?)\/(-?\d+(?:\.\d+)?)$/);
     if (f) return Number(f[1]) / Number(f[2]);
     return /^-?\d+(\.\d+)?$/.test(s) ? Number(s) : NaN;
