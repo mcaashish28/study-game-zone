@@ -104,5 +104,50 @@ SWG.mk = (function () {
     </svg>`;
   }
 
-  return { ri, pick, gcd, lcm, isPrime, factor, sup, fstr, feq, composite, parseFactors, parseNumber, num, frac, poly, graph };
+  // lin(2, -3, 7) -> "2x − 3y = 7"
+  function lin(a, b, c, vx = 'x', vy = 'y') {
+    let out = '';
+    for (const [k, v] of [[a, vx], [b, vy]]) {
+      if (!k) continue;
+      const body = (Math.abs(k) === 1 ? '' : Math.abs(k)) + v;
+      out += out ? (k < 0 ? ' − ' : ' + ') + body : (k < 0 ? '−' : '') + body;
+    }
+    return (out || '0') + ' = ' + num(c);
+  }
+
+  // An SVG of straight lines a·x + b·y = c on a squared grid from −R to R.
+  // eqs: [[a, b, c], ...] (up to 3); each gets its own colour and a label underneath.
+  function lines(eqs, R = 6) {
+    const S = 20, W = 2 * R * S, LH = 22, H = W + eqs.length * LH + 6;
+    const X = x => (x + R) * S, Y = y => (R - y) * S;
+    const cols = ['var(--accent-2)', 'var(--gold)', 'var(--good)'];
+    let grid = '', nums = '';
+    for (let k = -R; k <= R; k++) {
+      grid += `<line x1="${X(k)}" y1="0" x2="${X(k)}" y2="${W}"/><line x1="0" y1="${Y(k)}" x2="${W}" y2="${Y(k)}"/>`;
+      if (k && k % 2 === 0 && Math.abs(k) < R) {
+        nums += `<text x="${X(k)}" y="${Y(0) + 13}" text-anchor="middle">${num(k)}</text>`;
+        nums += `<text x="${X(0) - 4}" y="${Y(k) + 4}" text-anchor="end">${num(k)}</text>`;
+      }
+    }
+    const drawn = eqs.map(([a, b, c], i) => {
+      const [x1, y1, x2, y2] = b ? [-R - 1, (c + a * (R + 1)) / b, R + 1, (c - a * (R + 1)) / b] : [c / a, -R - 1, c / a, R + 1];
+      return `<line x1="${X(x1)}" y1="${Y(y1)}" x2="${X(x2)}" y2="${Y(y2)}" style="stroke:${cols[i]}"/>`;
+    }).join('');
+    const keys = eqs.map(([a, b, c], i) => {
+      const y = W + 6 + LH * i + LH / 2;
+      return `<line x1="8" y1="${y}" x2="32" y2="${y}" style="stroke:${cols[i]};stroke-width:4"/>` +
+        `<text x="40" y="${y + 5}" style="fill:var(--text);font-size:14px;font-weight:700">${lin(a, b, c)}</text>`;
+    }).join('');
+    return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Graph of two straight lines">
+      <defs><clipPath id="lclip"><rect width="${W}" height="${W}"/></clipPath></defs>
+      <g style="stroke:var(--line);stroke-width:1">${grid}</g>
+      <g style="stroke:var(--muted);stroke-width:1.5"><line x1="0" y1="${Y(0)}" x2="${W}" y2="${Y(0)}"/><line x1="${X(0)}" y1="0" x2="${X(0)}" y2="${W}"/></g>
+      <g style="fill:var(--muted);font-size:10px">${nums}
+        <text x="${W - 10}" y="${Y(0) - 5}" style="font-size:12px">x</text><text x="${X(0) + 5}" y="12" style="font-size:12px">y</text></g>
+      <g clip-path="url(#lclip)" style="stroke-width:3;stroke-linecap:round">${drawn}</g>
+      ${keys}
+    </svg>`;
+  }
+
+  return { ri, pick, gcd, lcm, isPrime, factor, sup, fstr, feq, composite, parseFactors, parseNumber, num, frac, poly, graph, lin, lines };
 })();
