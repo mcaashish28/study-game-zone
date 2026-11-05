@@ -1,6 +1,6 @@
 // Offline support. Bump VERSION whenever any file changes (e.g. a new chapter),
 // so phones download the new files.
-const VERSION = 'swg-v21';
+const VERSION = 'swg-v22';
 const FILES = [
   './',
   'index.html',

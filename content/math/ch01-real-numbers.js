@@ -282,7 +282,7 @@ SWG.addChapter('math', {
       const items = [
         [`√${a * a}`, true, `√${a * a} = ${a}, which is rational.`],
         [`√${p} × √${p * s * s}`, true, `√${p} × √${p * s * s} = √${p * p * s * s} = ${p * s}, which is rational.`],
-        [`(${a} + √${p})(${a} − √${p})`, true, `(a + b)(a − b) = a² − b²\n= ${a * a} − ${p} = ${a * a - p}, which is rational.`],
+        [`(${a} + √${p})(${a} − √${p})`, true, `(a + b)(a − b) = a² − b²\n= ${a * a} − ${p} = ${SWG.mk.num(a * a - p)}, which is rational.`],
         [`(${a} + √${p}) − √${p}`, true, `The √${p} cancels, leaving ${a}, which is rational.`],
         [`${a} + √${p}`, false, `rational + irrational = irrational.`],
         [`${a} − √${p}`, false, `rational − irrational = irrational.`],
