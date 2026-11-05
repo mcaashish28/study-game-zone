@@ -1,6 +1,6 @@
 // Offline support. Bump VERSION whenever any file changes (e.g. a new chapter),
 // so phones download the new files.
-const VERSION = 'swg-v23';
+const VERSION = 'swg-v24';
 const FILES = [
   './',
   'index.html',
@@ -28,6 +28,7 @@ const FILES = [
   'content/math/ch04-quadratic-equations.js',
   'content/math/ch05-arithmetic-progressions.js',
   'content/math/ch06-triangles.js',
+  'content/math/ch07-coordinate-geometry.js',
   'content/punjabi/basic.js',
   'content/punjabi/medium.js',
   'icons/icon.svg',
