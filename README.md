@@ -57,4 +57,6 @@ Maths chapters go in `content/math/` (see `ch01-real-numbers.js`). Write powers 
 
 English chapters go in `content/english/` (see `ff-prose-01-letter-to-god.js`). Set `level` to `First Flight · Prose`, `First Flight · Poems` or `Footprints Without Feet` so chapters are grouped by book. Use only short quotations from copyrighted texts.
 
+Social Science chapters go in `content/sst/` (see `pol-01-power-sharing.js`). Set `level` to `History`, `Geography`, `Political Science` or `Economics` so chapters are grouped by book. Written answers follow CBSE SST marks: 1, 3 (60–80 words), 4 (case-based) and 5 (120–150 words).
+
 **Important:** when editing a chapter, add new cards/questions at the **end** of each list — saved progress is linked to item positions.

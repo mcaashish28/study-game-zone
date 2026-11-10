@@ -390,7 +390,7 @@
       const open = !opened && pct < 100;
       if (open) opened = true;
       return `<details class="level" ${open ? 'open' : ''}>
-        <summary><b class="grow">${esc(lv)}</b><span class="muted small">${chs.length} chapters · ${pct}%</span></summary>
+        <summary><b class="grow">${esc(lv)}</b><span class="muted small">${chs.length} chapter${chs.length > 1 ? "s" : ""} · ${pct}%</span></summary>
         ${chs.map(chapterBtn).join('')}</details>`;
     });
     $app.innerHTML = topbar(`${s.icon} ${esc(s.name)}`, '#/') + (s.chapters.length
@@ -987,7 +987,9 @@
       <div class="qtext">${fmt(w.q)}</div>
       <div class="panel small muted">💡 Tip: ${ch.subject === 'english'
         ? { 1: 'one clear sentence is enough.', 2: 'write 2 clear points.', 3: 'about 40–50 words: answer, reason, and a detail from the text.', 6: 'about 100–120 words: a short intro, 3–4 points with examples or quotes from the text, and a conclusion.' }[w.marks] || 'answer every part.'
-        : { 1: 'one clear sentence is enough.', 2: 'write 2 clear points.', 3: 'write 3 points, and add an equation or example.', 4: 'answer every part (a), (b), (c), (d) separately.', 5: 'write 5 points: definition, explanation, equations, examples.' }[w.marks] + ' Write formulas like H2O — they will show correctly when checked.'}</div>
+        : ch.subject === 'sst'
+        ? { 1: 'one clear sentence or term is enough.', 2: 'write 2 clear points.', 3: 'about 60–80 words: 3 points, with a date, name or example.', 4: 'case-based: answer every part separately, using the passage.', 5: 'about 120–150 words: 5 points with dates, names and examples.' }[w.marks] || 'answer every part.'
+        :{ 1: 'one clear sentence is enough.', 2: 'write 2 clear points.', 3: 'write 3 points, and add an equation or example.', 4: 'answer every part (a), (b), (c), (d) separately.', 5: 'write 5 points: definition, explanation, equations, examples.' }[w.marks] + ' Write formulas like H2O — they will show correctly when checked.'}</div>
       <textarea id="ans" placeholder="Write your answer here…">${esc(S.drafts[w.id] || '')}</textarea>
       <div id="out" style="margin-top:14px"><button class="btn block" id="chk">Check my answer ✔</button></div>`;
     bindBack();
