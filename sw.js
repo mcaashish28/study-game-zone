@@ -1,6 +1,6 @@
 // Offline support. Bump VERSION whenever any file changes (e.g. a new chapter),
 // so phones download the new files.
-const VERSION = 'swg-v33';
+const VERSION = 'swg-v34';
 const FILES = [
   './',
   'index.html',
@@ -37,8 +37,10 @@ const FILES = [
   'content/math/ch13-statistics.js',
   'content/math/ch14-probability.js',
   'content/english/ff-prose-01-letter-to-god.js',
+  'content/english/ff-prose-02-nelson-mandela.js',
   'content/english/ff-poem-01-dust-of-snow.js',
   'content/english/ff-poem-02-fire-and-ice.js',
+  'content/english/ff-poem-03-tiger-in-the-zoo.js',
   'content/punjabi/basic.js',
   'content/punjabi/medium.js',
   'icons/icon.svg',
