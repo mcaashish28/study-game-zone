@@ -1,6 +1,6 @@
 // Offline support. Bump VERSION whenever any file changes (e.g. a new chapter),
 // so phones download the new files.
-const VERSION = 'swg-v40';
+const VERSION = 'swg-v41';
 const FILES = [
   './',
   'index.html',
@@ -62,6 +62,7 @@ const FILES = [
   'content/sst/eco-02-sectors.js',
   'content/sst/eco-03-money-credit.js',
   'content/sst/eco-04-globalisation.js',
+  'content/sst/eco-05-consumer-rights.js',
   'content/punjabi/basic.js',
   'content/punjabi/medium.js',
   'icons/icon.svg',
