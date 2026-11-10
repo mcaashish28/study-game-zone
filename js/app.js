@@ -985,8 +985,9 @@
     if (!w) return renderWriteList(ch);
     $app.innerHTML = topbar(`✍️ Question ${i + 1}`, `#/play/${ch.id}/write`, `<span class="marks">${w.marks} mark${w.marks > 1 ? 's' : ''}</span>`) + `
       <div class="qtext">${fmt(w.q)}</div>
-      <div class="panel small muted">💡 Tip: ${{ 1: 'one clear sentence is enough.', 2: 'write 2 clear points.', 3: 'write 3 points, and add an equation or example.', 4: 'answer every part (a), (b), (c), (d) separately.', 5: 'write 5 points: definition, explanation, equations, examples.' }[w.marks]}
-        Write formulas like H2O — they will show correctly when checked.</div>
+      <div class="panel small muted">💡 Tip: ${ch.subject === 'english'
+        ? { 1: 'one clear sentence is enough.', 2: 'write 2 clear points.', 3: 'about 40–50 words: answer, reason, and a detail from the text.', 6: 'about 100–120 words: a short intro, 3–4 points with examples or quotes from the text, and a conclusion.' }[w.marks] || 'answer every part.'
+        : { 1: 'one clear sentence is enough.', 2: 'write 2 clear points.', 3: 'write 3 points, and add an equation or example.', 4: 'answer every part (a), (b), (c), (d) separately.', 5: 'write 5 points: definition, explanation, equations, examples.' }[w.marks] + ' Write formulas like H2O — they will show correctly when checked.'}</div>
       <textarea id="ans" placeholder="Write your answer here…">${esc(S.drafts[w.id] || '')}</textarea>
       <div id="out" style="margin-top:14px"><button class="btn block" id="chk">Check my answer ✔</button></div>`;
     bindBack();

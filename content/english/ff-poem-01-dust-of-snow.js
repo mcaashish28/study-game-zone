@@ -37,7 +37,13 @@ SWG.addChapter('english', {
     { topic: 'device', front: 'Name 3 poetic devices in the poem.', back: '• Alliteration: "has … heart"\n• Metaphor: "dust of snow"\n• Symbolism: crow and hemlock (sorrow)\n• Enjambment: the sentence runs across lines' },
     { topic: 'device', front: 'How many sentences and stanzas are in the poem?', back: 'One sentence spread over two stanzas (quatrains) of four lines each.' },
     { topic: 'lang', front: 'Meaning: rued', back: 'Regretted; felt sorry about.' },
-    { topic: 'lang', front: 'Meaning: hemlock', back: 'A poisonous plant / tree (an evergreen with white flowers in the case of the plant).' }
+    { topic: 'lang', front: 'Meaning: hemlock', back: 'A poisonous plant / tree (an evergreen with white flowers in the case of the plant).' },
+    // ── added: NCERT "Thinking about the poem" ──
+    { topic: 'meaning', front: 'NCERT: Why doesn\'t the poet write about a "beautiful" tree like a maple, an oak or a pine?', back: 'He wants to show that joy can come even from something gloomy and poisonous. A beautiful tree would not give this contrast.' },
+    { topic: 'meaning', front: 'NCERT: Do the crow and hemlock represent joy or sorrow?', back: 'Sorrow — gloom, bad omen and death. (Yet here they bring joy.)' },
+    { topic: 'meaning', front: 'NCERT: What does the "dust of snow" stand for?', back: 'A small, refreshing moment of joy / hope / nature\'s healing touch that drives away sadness.' },
+    { topic: 'meaning', front: 'Key idea in one line', back: 'A tiny moment in nature can change a bad day into a better one.' },
+    { topic: 'device', front: 'What is the tone of the poem?', back: 'It moves from gloomy and regretful (implied) to light and hopeful.' }
   ],
 
   quiz: [
@@ -58,7 +64,15 @@ SWG.addChapter('english', {
     { topic: 'lang', q: '"Rued" means…', options: ['Enjoyed', 'Regretted', 'Ruled', 'Remembered'], answer: 1, explain: 'Rue = to regret.' },
     { topic: 'lang', q: 'Hemlock is…', options: ['A sweet fruit', 'A poisonous plant/tree', 'A kind of bird', 'A flower used in prayer'], answer: 1, explain: 'It is poisonous.' },
     { topic: 'meaning', q: 'Read: "The way a crow / Shook down on me / The dust of snow / From a hemlock tree". The poet was standing…', options: ['Inside a house', 'Under a tree', 'On a boat', 'On a mountain top'], answer: 1, explain: 'The snow fell on him from the tree.' },
-    { topic: 'meaning', q: 'Why is the poem surprising?', options: ['It is very long', 'Gloomy things (crow, hemlock, snow) bring joy', 'It has no rhyme', 'It is about summer'], answer: 1, explain: 'Frost uses negative symbols to show a positive change.' }
+    { topic: 'meaning', q: 'Why is the poem surprising?', options: ['It is very long', 'Gloomy things (crow, hemlock, snow) bring joy', 'It has no rhyme', 'It is about summer'], answer: 1, explain: 'Frost uses negative symbols to show a positive change.' },
+    // ── added: extract-based (CBSE style) ──
+    { topic: 'poem', q: 'Extract: "The way a crow / Shook down on me / The dust of snow / From a hemlock tree"\nWho is "me" here?', options: ['The crow', 'The poet', 'A child', 'A farmer'], answer: 1, explain: 'The poet himself.' },
+    { topic: 'meaning', q: 'Extract: "The way a crow / Shook down on me / The dust of snow / From a hemlock tree"\nThe crow and hemlock here suggest…', options: ['Happiness', 'Gloom and sorrow', 'Wealth', 'Spring'], answer: 1, explain: 'Both are symbols of sorrow and bad omen.' },
+    { topic: 'meaning', q: 'Extract: "Has given my heart / A change of mood / And saved some part / Of a day I had rued."\nWhat had the poet felt about the day before this?', options: ['He had enjoyed it', 'He had regretted it', 'He had forgotten it', 'He had planned it'], answer: 1, explain: 'Rued = regretted.' },
+    { topic: 'meaning', q: 'Extract: "Has given my heart / A change of mood…"\nWhat gave the poet a change of mood?', options: ['A letter', 'The crow shaking snow on him', 'Sunshine', 'A friend\'s visit'], answer: 1, explain: 'The dust of snow shaken down by the crow.' },
+    { topic: 'device', q: 'Extract: "And saved some part / Of a day I had rued."\nThe rhyming words in the second stanza are…', options: ['heart/part, mood/rued', 'crow/snow, me/tree', 'mood/part, heart/rued', 'day/rued'], answer: 0, explain: 'heart–part and mood–rued.' },
+    { topic: 'meaning', q: 'NCERT: The poet does not choose a maple, oak or pine because…', options: ['They do not grow in snow', 'He wants to show joy coming from something gloomy', 'He did not know them', 'They have no branches'], answer: 1, explain: 'The poisonous hemlock creates the contrast.' },
+    { topic: 'meaning', q: 'The "dust of snow" stands for…', options: ['Cold and death', 'A small moment of joy that lifts the mood', 'Winter sickness', 'Dirt'], answer: 1, explain: 'It refreshes the poet and saves his day.' }
   ],
 
   match: [
@@ -108,7 +122,7 @@ SWG.addChapter('english', {
         { text: 'Link to the crow and snow in the poem', kw: ['poem|frost|crow|snow'] }
       ],
       model: 'Once I was upset after a bad test result. On the way home, a puppy ran up wagging its tail and played with me. I started smiling, and the rest of my day felt better. Just like the crow shaking snow on Frost, a small, unexpected moment changed my mood and saved my day.' },
-    { marks: 5, q: 'Explain the central idea of "Dust of Snow" and how Frost uses symbols to express it.',
+    { marks: 6, q: 'Explain the central idea of "Dust of Snow" and how Frost uses symbols to express it.',
       keypoints: [
         { text: 'The incident: crow shakes snow from a hemlock tree on the poet', kw: ['crow', 'snow'] },
         { text: 'The poet was in a sad, regretful mood', kw: ['sad|regret|rue'] },
@@ -116,6 +130,21 @@ SWG.addChapter('english', {
         { text: 'Crow and hemlock are symbols of sorrow/death', kw: ['symbol|sorrow|death|gloom|omen'] },
         { text: 'Message: small moments in nature can heal and bring joy', kw: ['small|nature|joy|happiness'] }
       ],
-      model: 'In "Dust of Snow", Robert Frost describes a simple incident: while he is in a sad and regretful mood, a crow sitting on a hemlock tree shakes down some fine snow on him. This small, unexpected touch of nature lifts his spirits, and he says it "saved some part of a day I had rued". Frost uses symbols cleverly. The crow, with its black colour, is a symbol of bad luck, and the hemlock is a poisonous tree linked with death; snow is cold. These are not usually happy images. Yet they bring the poet joy. The central idea is that happiness can come from the smallest and most unlikely moments in nature, and that a single moment can change our whole outlook.' }
+      model: 'In "Dust of Snow", Robert Frost describes a simple incident: while he is in a sad and regretful mood, a crow sitting on a hemlock tree shakes down some fine snow on him. This small, unexpected touch of nature lifts his spirits, and he says it "saved some part of a day I had rued". Frost uses symbols cleverly. The crow, with its black colour, is a symbol of bad luck, and the hemlock is a poisonous tree linked with death; snow is cold. These are not usually happy images. Yet they bring the poet joy. The central idea is that happiness can come from the smallest and most unlikely moments in nature, and that a single moment can change our whole outlook.' },
+    // ── added: NCERT questions not covered above ──
+    { marks: 3, q: 'What is "hemlock"? Why doesn\'t the poet write about a more "beautiful" tree such as a maple, an oak or a pine?',
+      keypoints: [
+        { text: 'Hemlock is a poisonous tree/plant', kw: ['poison'] },
+        { text: 'It stands for gloom / death / sorrow', kw: ['gloom|death|sorrow|sad|negative'] },
+        { text: 'He wants to show joy can come from something unpleasant', kw: ['joy|happ|cheer|positive'] }
+      ],
+      model: 'Hemlock is a poisonous tree, linked with gloom and death. The poet does not choose a beautiful tree like a maple, oak or pine because he wants to show that even something unpleasant and gloomy can bring joy. The contrast makes his message stronger.' },
+    { marks: 3, q: 'What do the "crow" and "hemlock" represent — joy or sorrow? What does the dust of snow that the crow shakes off a hemlock tree stand for?',
+      keypoints: [
+        { text: 'Crow and hemlock represent sorrow / gloom', kw: ['sorrow|gloom|sad|bad'] },
+        { text: 'Dust of snow stands for a moment of joy / hope', kw: ['joy|hope|happ|refresh'] },
+        { text: 'It changes the poet\'s mood and saves his day', kw: ['mood|day|saved'] }
+      ],
+      model: 'The crow and the hemlock represent sorrow, gloom and bad omen. The dust of snow they shake down stands for a small, refreshing moment of joy and hope. It changes the poet\'s mood and saves the rest of his day — joy coming from a source of sorrow.' }
   ]
 });

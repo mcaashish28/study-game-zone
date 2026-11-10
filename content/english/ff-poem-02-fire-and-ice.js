@@ -39,7 +39,14 @@ SWG.addChapter('english', {
     { topic: 'device', front: 'Why is "would suffice" an understatement?', back: 'It calmly says hatred would be "enough" to destroy the world, which is a mild way of saying something very serious.' },
     { topic: 'lang', front: 'Meaning: suffice', back: 'To be enough.' },
     { topic: 'lang', front: 'Meaning: perish', back: 'To die or be destroyed.' },
-    { topic: 'lang', front: 'Meaning: "I hold with those"', back: 'I agree with those people.' }
+    { topic: 'lang', front: 'Meaning: "I hold with those"', back: 'I agree with those people.' },
+    // ── added: NCERT hint words and extra points ──
+    { topic: 'meaning', front: 'NCERT hint: words for "fire"', back: 'Greed, avarice, lust, conflict, fury.' },
+    { topic: 'meaning', front: 'NCERT hint: words for "ice"', back: 'Rigidity, intolerance, insensitivity, coldness, indifference, hatred.' },
+    { topic: 'lang', front: 'Meaning: avarice', back: 'Extreme greed for money or wealth.' },
+    { topic: 'lang', front: 'Meaning: indifference', back: 'Not caring at all about others.' },
+    { topic: 'meaning', front: 'Fire destroys fast; ice destroys slowly. What does this suggest?', back: 'Desire destroys quickly and violently (wars, conflicts); hatred destroys slowly and silently, but just as completely.' },
+    { topic: 'device', front: 'What is the tone of "Fire and Ice"?', back: 'Calm, thoughtful and ironic — the poet talks about the end of the world almost casually.' }
   ],
 
   quiz: [
@@ -60,7 +67,14 @@ SWG.addChapter('english', {
     { topic: 'device', q: 'Using fire for desire and ice for hatred is…', options: ['Symbolism', 'Onomatopoeia', 'Rhyme', 'Refrain'], answer: 0, explain: 'They stand for emotions.' },
     { topic: 'device', q: 'Fire and ice are opposites. Putting opposites together is called…', options: ['Antithesis / contrast', 'Alliteration', 'Personification', 'Simile'], answer: 0, explain: 'Contrast of hot and cold.' },
     { topic: 'lang', q: '"Perish" means…', options: ['To grow', 'To be destroyed', 'To wait', 'To burn'], answer: 1, explain: 'Perish = die / be destroyed.' },
-    { topic: 'lang', q: '"I hold with those" means…', options: ['I hold their hands', 'I agree with them', 'I stop them', 'I fight them'], answer: 1, explain: 'Hold with = agree with.' }
+    { topic: 'lang', q: '"I hold with those" means…', options: ['I hold their hands', 'I agree with them', 'I stop them', 'I fight them'], answer: 1, explain: 'Hold with = agree with.' },
+    // ── added: extract-based (CBSE style) and NCERT hints ──
+    { topic: 'meaning', q: 'Extract: "From what I\'ve tasted of desire / I hold with those who favour fire."\n"Tasted of desire" means…', options: ['Eaten spicy food', 'Experienced desire', 'Cooked with fire', 'Disliked desire'], answer: 1, explain: 'The poet has experienced desire himself.' },
+    { topic: 'meaning', q: 'Extract: "From what I\'ve tasted of desire / I hold with those who favour fire."\nThe poet links fire with…', options: ['Hatred', 'Desire', 'Peace', 'Ice'], answer: 1, explain: 'Fire = desire.' },
+    { topic: 'meaning', q: 'Extract: "I think I know enough of hate / To say that for destruction ice / Is also great / And would suffice."\nAccording to the poet, hatred is…', options: ['Weak', 'Equally capable of destroying the world', 'Better than desire', 'Harmless'], answer: 1, explain: 'Ice (hatred) is "also great" for destruction.' },
+    { topic: 'device', q: 'Extract: "Some say the world will end in fire, / Some say in ice."\nThe device in "Some say… Some say" is…', options: ['Repetition', 'Simile', 'Onomatopoeia', 'Personification'], answer: 0, explain: 'The phrase is repeated.' },
+    { topic: 'meaning', q: 'NCERT hint: which word does NOT describe "ice" in the poem?', options: ['Rigidity', 'Indifference', 'Avarice', 'Intolerance'], answer: 2, explain: 'Avarice (greed) goes with fire.' },
+    { topic: 'meaning', q: 'NCERT hint: which word describes "fire" in the poem?', options: ['Insensitivity', 'Fury', 'Coldness', 'Rigidity'], answer: 1, explain: 'Fire = greed, avarice, lust, conflict, fury.' }
   ],
 
   match: [
@@ -103,7 +117,7 @@ SWG.addChapter('english', {
         { text: 'Swinging between the two rhymes mirrors the contrast of fire and ice', kw: ['contrast|opposite|alternat|balance'] }
       ],
       model: 'The rhyme scheme is aba abc bcb. The rhymes keep switching between "fire" words (fire, desire) and "ice" words (ice, twice, suffice). This back-and-forth pattern mirrors the poet\'s weighing of two opposite forces — the hot fire of desire and the cold ice of hatred — and shows that both are equally destructive.' },
-    { marks: 5, q: 'Explain the central idea of "Fire and Ice". How does Frost connect the end of the world with human emotions?',
+    { marks: 6, q: 'Explain the central idea of "Fire and Ice". How does Frost connect the end of the world with human emotions?',
       keypoints: [
         { text: 'Two theories: the world will end in fire or in ice', kw: ['fire', 'ice'] },
         { text: 'Fire = desire/greed, from the poet\'s experience', kw: ['desire|greed'] },
@@ -111,6 +125,14 @@ SWG.addChapter('english', {
         { text: 'Both emotions destroy relationships and the world', kw: ['destr|war|conflict|perish'] },
         { text: 'Message: control desire and hatred', kw: ['control|check|avoid'] }
       ],
-      model: 'In "Fire and Ice", Robert Frost begins with two popular ideas about how the world will end — in fire or in ice. He then gives these a deeper meaning. Fire stands for desire, greed and anger. From what he has "tasted of desire", the poet agrees that the world will end in fire, since endless desire leads to selfishness, conflict and war. Ice stands for hatred and indifference. If the world had to perish twice, he knows enough of hate to say that ice is "also great" for destruction and "would suffice". Hatred works slowly and coldly but just as surely. The central idea is that human emotions, not just natural disasters, can destroy the world. The poem warns us to control our desires and hatred.' }
+      model: 'In "Fire and Ice", Robert Frost begins with two popular ideas about how the world will end — in fire or in ice. He then gives these a deeper meaning. Fire stands for desire, greed and anger. From what he has "tasted of desire", the poet agrees that the world will end in fire, since endless desire leads to selfishness, conflict and war. Ice stands for hatred and indifference. If the world had to perish twice, he knows enough of hate to say that ice is "also great" for destruction and "would suffice". Hatred works slowly and coldly but just as surely. The central idea is that human emotions, not just natural disasters, can destroy the world. The poem warns us to control our desires and hatred.' },
+    // ── added: NCERT question 1 ──
+    { marks: 3, q: 'There are many ideas about how the world will "end". Do you think the world will end some day? What would happen if the sun got so hot that it "burnt" the earth, or so cold that the earth froze?',
+      keypoints: [
+        { text: 'Give your opinion (yes/no) with a reason', kw: ['yes|no|think|believe|may'] },
+        { text: 'Too hot: oceans dry up, life burns, nothing survives', kw: ['hot|burn|dry'] },
+        { text: 'Too cold: everything freezes, no food or water, life ends', kw: ['cold|freez|ice'] }
+      ],
+      model: 'I think the world may end some day, as scientists say the sun will not burn forever. If the sun got so hot that it burnt the earth, rivers and oceans would dry up and plants, animals and humans would die. If it got so cold that the earth froze, everything would be covered with ice, there would be no food or liquid water, and life would end. Frost suggests that human desire and hatred could destroy the world in the same way.' }
   ]
 });
