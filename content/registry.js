@@ -4,6 +4,7 @@ window.SWG = window.SWG || {};
 SWG.subjects = [
   { id: 'science', name: 'Science', icon: '🧪', color: '#22d3ee', chapters: [] },
   { id: 'math', name: 'Maths', icon: '📐', color: '#a78bfa', chapters: [] },
+  { id: 'english', name: 'English', icon: '📚', color: '#34d399', chapters: [] },
   { id: 'punjabi', name: 'Punjabi ਪੰਜਾਬੀ', icon: '📖', color: '#f59e0b', chapters: [] }
 ];
 

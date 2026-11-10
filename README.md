@@ -55,4 +55,6 @@ Punjabi chapters go in `content/punjabi/` (see `ch00-first-steps.js`). Any Gurmu
 
 Maths chapters go in `content/math/` (see `ch01-real-numbers.js`). Write powers as Unicode superscripts (x², 2³), because a digit straight after a letter is shown as a subscript. A `practice` list of generators powers the 🧮 Practice mode: each `gen(mk)` returns a fresh problem, using the helpers in `js/mathkit.js`.
 
+English chapters go in `content/english/` (see `ff-prose-01-letter-to-god.js`). Set `level` to `First Flight · Prose`, `First Flight · Poems` or `Footprints Without Feet` so chapters are grouped by book. Use only short quotations from copyrighted texts.
+
 **Important:** when editing a chapter, add new cards/questions at the **end** of each list — saved progress is linked to item positions.
