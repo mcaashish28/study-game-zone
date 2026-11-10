@@ -1,6 +1,6 @@
 // Offline support. Bump VERSION whenever any file changes (e.g. a new chapter),
 // so phones download the new files.
-const VERSION = 'swg-v38';
+const VERSION = 'swg-v39';
 const FILES = [
   './',
   'index.html',
@@ -45,14 +45,17 @@ const FILES = [
   'content/sst/hist-02-nationalism-india.js',
   'content/sst/hist-03-global-world.js',
   'content/sst/hist-04-age-industrialisation.js',
+  'content/sst/hist-05-print-culture.js',
   'content/sst/geo-01-resources-development.js',
   'content/sst/geo-02-forest-wildlife.js',
   'content/sst/geo-03-water-resources.js',
   'content/sst/geo-04-agriculture.js',
+  'content/sst/geo-05-minerals-energy.js',
   'content/sst/pol-01-power-sharing.js',
   'content/sst/pol-02-federalism.js',
   'content/sst/pol-03-gender-religion-caste.js',
   'content/sst/pol-04-political-parties.js',
+  'content/sst/pol-05-outcomes-democracy.js',
   'content/sst/eco-01-development.js',
   'content/sst/eco-02-sectors.js',
   'content/sst/eco-03-money-credit.js',
